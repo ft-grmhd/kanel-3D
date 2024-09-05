@@ -8,8 +8,11 @@ namespace kbh
 	class SDLRenderer
 	{
 		public:
-			SDLRenderer(const class Window& win);
-			
+			SDLRenderer(const class SDLWindow& win);
+
+			void ClearRender() const noexcept;
+			void Present() const noexcept;
+
 			inline SDL_Renderer* const GetNativeRenderer() const noexcept { return p_renderer; }
 			inline void GetDrawableSize(int& w, int& h) const noexcept { SDL_GetRendererOutputSize(p_renderer, &w, &h); }
 			void Destroy() noexcept;

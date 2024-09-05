@@ -11,7 +11,6 @@ set_optimize("fastest")
 
 target("kanel-3D")
 	set_default(true)
-	set_licensefile("./LICENSE")
 	set_kind("binary")
 	
 	set_targetdir("./Bin")

@@ -1,9 +1,9 @@
-#ifndef __SCOPE_CORE_ENUMS__
-#define __SCOPE_CORE_ENUMS__
+#ifndef KANEL_3D_CORE_ENUMS
+#define KANEL_3D_CORE_ENUMS
 
 #include <cstddef>
 
-namespace Scop
+namespace kbh
 {
 	enum class LogType
 	{
