@@ -7,6 +7,7 @@
 #include <ImGui/Panels/Docks.h>
 #include <ImGui/Panels/Logger.h>
 #include <ImGui/Panels/Parameters.h>
+#include <ImGui/Panels/Render.h>
 #include <ImGui/Panels/MainMenuBar.h>
 
 #include <string>
@@ -45,6 +46,7 @@ std::filesystem::path GetExecutablePath()
 	kbh::PanelStack stack;
 	stack.AddPanel(std::make_shared<kbh::Docks>());
 	stack.AddPanel(std::make_shared<kbh::Logger>());
+	stack.AddPanel(std::make_shared<kbh::Render>());
 	stack.AddPanel(std::make_shared<kbh::Parameters>());
 
 	while(!inputs.IsQuitResquested())
