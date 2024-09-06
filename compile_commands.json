@@ -1,0 +1,61 @@
+[
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/SDL/SDLContext.cpp.o", "Runtime/Sources/SDL/SDLContext.cpp"],
+  "file": "Runtime/Sources/SDL/SDLContext.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/SDL/SDLWindow.cpp.o", "Runtime/Sources/SDL/SDLWindow.cpp"],
+  "file": "Runtime/Sources/SDL/SDLWindow.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/SDL/SDLInputs.cpp.o", "Runtime/Sources/SDL/SDLInputs.cpp"],
+  "file": "Runtime/Sources/SDL/SDLInputs.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/SDL/SDLRenderer.cpp.o", "Runtime/Sources/SDL/SDLRenderer.cpp"],
+  "file": "Runtime/Sources/SDL/SDLRenderer.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/ImGui/Panel/Docks.cpp.o", "Runtime/Sources/ImGui/Panel/Docks.cpp"],
+  "file": "Runtime/Sources/ImGui/Panel/Docks.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/ImGui/Panel/MainMenuBar.cpp.o", "Runtime/Sources/ImGui/Panel/MainMenuBar.cpp"],
+  "file": "Runtime/Sources/ImGui/Panel/MainMenuBar.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/ImGui/Panel/PanelStack.cpp.o", "Runtime/Sources/ImGui/Panel/PanelStack.cpp"],
+  "file": "Runtime/Sources/ImGui/Panel/PanelStack.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/ImGui/ImGuiContext.cpp.o", "Runtime/Sources/ImGui/ImGuiContext.cpp"],
+  "file": "Runtime/Sources/ImGui/ImGuiContext.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/Core/Logs.cpp.o", "Runtime/Sources/Core/Logs.cpp"],
+  "file": "Runtime/Sources/Core/Logs.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/Core/EventBus.cpp.o", "Runtime/Sources/Core/EventBus.cpp"],
+  "file": "Runtime/Sources/Core/EventBus.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/Core/main.cpp.o", "Runtime/Sources/Core/main.cpp"],
+  "file": "Runtime/Sources/Core/main.cpp"
+},
+{
+  "directory": "/home/kbz_8/Documents/Code/GRMHD/kanel-3D",
+  "arguments": ["/usr/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O3", "-std=c++17", "-IRuntime/Includes", "-IRuntime/Sources", "-DSDL_MAIN_HANDLED", "-DKANEL_3D_DEBUG", "-D_REENTRANT", "-I", "/usr/include/libpng16", "-I", "/usr/include/rav1e", "-I", "/usr/include/svt-av1", "-I", "/usr/include/webp", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/imgui", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/backends", "-I", "/home/kbz_8/.xmake/packages/i/imgui/v1.90-docking/9970192d4fc347acbdefbb3c96bbaaf0/include/misc/cpp", "-I", "/usr/include/SDL2", "-o", "build/Objects/linux_x86_64/kanel-3D/linux/x86_64/debug/Runtime/Sources/Core/EventListener.cpp.o", "Runtime/Sources/Core/EventListener.cpp"],
+  "file": "Runtime/Sources/Core/EventListener.cpp"
+}]

@@ -20,7 +20,7 @@ namespace kbh
 
 		private:
 			const class SDLRenderer& m_renderer;
-			bool m_render_about_window = false;
+			bool m_render_about_window = true;
 			bool m_quit_requested = false;
 	};
 }

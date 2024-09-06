@@ -15,6 +15,7 @@ namespace kbh
 
 			inline SDL_Renderer* const GetNativeRenderer() const noexcept { return p_renderer; }
 			inline void GetDrawableSize(int& w, int& h) const noexcept { SDL_GetRendererOutputSize(p_renderer, &w, &h); }
+
 			void Destroy() noexcept;
 
 			~SDLRenderer();
