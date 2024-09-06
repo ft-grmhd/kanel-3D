@@ -1,4 +1,5 @@
 #include <ImGui/Panels/Render.h>
+#include <Core/MaterialFont.h>
 
 namespace kbh
 {
@@ -6,7 +7,7 @@ namespace kbh
 
 	void Render::OnUpdate(ImVec2 size)
 	{
-		if(ImGui::Begin("Render", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
+		if(ImGui::Begin(KBH_ICON_MD_MONITOR" Render", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
 		{
 			ImGui::End();
 		}

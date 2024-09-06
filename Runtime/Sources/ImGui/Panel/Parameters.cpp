@@ -1,4 +1,5 @@
 #include <ImGui/Panels/Parameters.h>
+#include <Core/MaterialFont.h>
 
 namespace kbh
 {
@@ -6,7 +7,7 @@ namespace kbh
 
 	void Parameters::OnUpdate(ImVec2 size)
 	{
-		if(ImGui::Begin("Parameters", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
+		if(ImGui::Begin(KBH_ICON_MD_VIEW_IN_AR" Parameters", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
 		{
 			ImGui::End();
 		}

@@ -1,4 +1,5 @@
 #include <ImGui/Panels/Logger.h>
+#include <Core/MaterialFont.h>
 
 namespace kbh
 {
@@ -8,7 +9,7 @@ namespace kbh
 	{
 		if(!m_is_open)
 			return;
-		if(ImGui::Begin("Logger", &m_is_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
+		if(ImGui::Begin(KBH_ICON_MD_TERMINAL" Logs", &m_is_open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
 		{
 			ImGui::End();
 		}

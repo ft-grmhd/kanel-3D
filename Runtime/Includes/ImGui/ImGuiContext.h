@@ -18,8 +18,9 @@ namespace kbh
 
 			~ImGuiContext();
 
-		private:
-			void SetDarkTheme();
+			static void SetDarkTheme();
+			static void SetWhiteTheme();
+			static void SetDraculaTheme();
 
 		private:
 			const class SDLRenderer& m_renderer;

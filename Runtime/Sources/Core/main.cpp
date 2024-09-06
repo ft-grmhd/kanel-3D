@@ -44,7 +44,7 @@ std::filesystem::path GetExecutablePath()
 	kbh::MainMenuBar menubar(renderer);
 
 	kbh::PanelStack stack;
-	stack.AddPanel(std::make_shared<kbh::Docks>());
+	stack.AddPanel(std::make_shared<kbh::Docks>(menubar));
 	stack.AddPanel(std::make_shared<kbh::Logger>());
 	stack.AddPanel(std::make_shared<kbh::Render>());
 	stack.AddPanel(std::make_shared<kbh::Parameters>());
@@ -68,7 +68,9 @@ std::filesystem::path GetExecutablePath()
 					panel->OnUpdate(size);
 
 				if(menubar.ShouldRenderAboutWindow())
-					menubar.RenderAboutWindow(size);
+					menubar.RenderAboutWindow();
+				if(menubar.ShouldRenderSettingsWindow())
+					menubar.RenderSettingsWindow();
 			imgui.EndFrame();
 		renderer.Present();
 
