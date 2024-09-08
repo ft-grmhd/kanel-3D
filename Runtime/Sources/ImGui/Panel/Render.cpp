@@ -1,9 +1,16 @@
 #include <ImGui/Panels/Render.h>
 #include <Core/MaterialFont.h>
 
+#include <Renderer/RenderCore.h>
+
 namespace kbh
 {
 	Render::Render() : Panel("Render") {}
+
+	void Render::OnAttach()
+	{
+		RenderCore::Get().Init();
+	}
 
 	void Render::OnUpdate(ImVec2 size)
 	{
@@ -11,5 +18,10 @@ namespace kbh
 		{
 			ImGui::End();
 		}
+	}
+
+	void Render::OnQuit()
+	{
+		RenderCore::Get().Destroy();
 	}
 }

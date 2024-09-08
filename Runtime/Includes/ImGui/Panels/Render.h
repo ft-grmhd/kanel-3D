@@ -10,7 +10,9 @@ namespace kbh
 		public:
 			Render();
 
+			void OnAttach() override;
 			void OnUpdate(ImVec2 size) override;
+			void OnQuit() override;
 
 			~Render() override = default;
 	};

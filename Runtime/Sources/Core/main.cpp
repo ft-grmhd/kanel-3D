@@ -19,6 +19,8 @@
 
 #include <imgui.h>
 
+#include <Core/Logs.h>
+
 constexpr const std::int16_t WINDOW_WIDTH = 1280;
 constexpr const std::int16_t WINDOW_HEIGHT = 750;
 

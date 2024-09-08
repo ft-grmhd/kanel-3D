@@ -1,7 +1,7 @@
 add_repositories("local-repo Xmake")
 
 add_requires("imgui v1.90-docking", { configs = { sdl2 = true }})
-add_requires("libsdl", "libsdl_image", "kvf")
+add_requires("libsdl", "libsdl_image", "kvf", "pfd")
 
 add_rules("mode.debug", "mode.release")
 set_defaultmode("release")
@@ -18,7 +18,7 @@ target("kanel-3D")
 	
 	set_targetdir("./Bin")
 
-	add_packages("libsdl", "libsdl_image", "imgui", "kvf")
+	add_packages("libsdl", "libsdl_image", "imgui", "kvf", "pfd")
 
 	add_includedirs("Runtime/Includes/", "Runtime/Sources")
 

@@ -5,6 +5,7 @@
 #include <Utils/Ansi.h>
 #include <Core/EventBase.h>
 #include <Core/EventBus.h>
+#include <Core/MessageBox.h>
 
 namespace kbh
 {
@@ -50,6 +51,12 @@ namespace kbh
 
 			default: break;
 		}
+
+		#ifndef KANEL_3D_DEBUG
+			if(type != LogType::Debug)
+				MessageBox(message, type);
+		#endif
+
 		if(type == LogType::FatalError)
 		{
 			std::cout << Ansi::bg_red << "Fatal Error: emergency exit" << Ansi::bg_def << std::endl;

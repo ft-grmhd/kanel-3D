@@ -4,6 +4,8 @@
 #include <SDL/SDLWindow.h>
 #include <Core/MaterialFont.h>
 
+#include <portable-file-dialogs.h>
+
 #include <array>
 #include <functional>
 #include <utility>
@@ -27,7 +29,9 @@ namespace kbh
 			if(ImGui::BeginMenu(KBH_ICON_MD_FOLDER" File"))
 			{
 				if(ImGui::MenuItem("Open"))
-				{}
+				{
+					auto file = pfd::open_file("Open result file", "", { "caca file (.caca)", "*.caca" }).result();
+				}
 				if(ImGui::MenuItem("Quit"))
 					m_quit_requested = true;
 				ImGui::EndMenu();
