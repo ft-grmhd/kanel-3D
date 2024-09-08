@@ -21,6 +21,7 @@ namespace kbh
 			static void SetDarkTheme();
 			static void SetWhiteTheme();
 			static void SetDraculaTheme();
+			static void SetCosyTheme();
 
 		private:
 			const class SDLRenderer& m_renderer;
