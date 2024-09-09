@@ -46,13 +46,10 @@ std::filesystem::path GetExecutablePath()
 	};
 	kbh::EventBus::RegisterListener({ functor, "__kanel-3D" });
 
-	kbh::RenderCore::Get().Init();
-
 	kbh::SDLContext sdl_context;
 	kbh::SDLWindow win("kanel 3D", WINDOW_WIDTH, WINDOW_HEIGHT);
 	kbh::SDLInputs inputs;
-	kbh::WindowRenderer renderer;
-	renderer.Init(&win);
+	kbh::WindowRenderer renderer(&win);
 	kbh::ImGuiContext imgui(&renderer, GetExecutablePath().parent_path().parent_path() / "Resources");
 
 	kbh::MainMenuBar menubar;
@@ -92,11 +89,11 @@ std::filesystem::path GetExecutablePath()
 			break;
 	}
 
-	kbh::RenderCore::Get().Destroy();
-
 	stack.Destroy();
 	menubar.Destroy();
 	imgui.Destroy();
+	renderer.Destroy();
 	win.Destroy();
+	kbh::RenderCore::Get().Destroy();
 	return 0;
 }

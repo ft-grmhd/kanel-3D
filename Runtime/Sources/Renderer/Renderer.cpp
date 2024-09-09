@@ -19,6 +19,7 @@ namespace kbh
 	void Renderer::Init()
 	{
 		auto& render_core = RenderCore::Get();
+		render_core.Init();
 		for(std::size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
 			m_image_available_semaphores[i] = kvfCreateSemaphore(render_core.GetDevice());

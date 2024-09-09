@@ -25,6 +25,8 @@ namespace kbh
 		};
 		EventBus::RegisterListener({ functor, "__WindowRenderer" });
 
+		Renderer::Init();
+
 		p_window = window;
 		auto& render_core = RenderCore::Get();
 		if(SDL_Vulkan_CreateSurface(p_window->GetNativeWindow(), render_core.GetInstance(), &m_surface) != SDL_TRUE)
@@ -32,8 +34,6 @@ namespace kbh
 		DebugLog("Vulkan : surface created");
 
 		CreateSwapchain();
-
-		Renderer::Init();
 	}
 
 	bool WindowRenderer::BeginFrame()

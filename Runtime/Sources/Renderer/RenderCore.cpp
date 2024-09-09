@@ -42,17 +42,15 @@ namespace kbh
 
 	void RenderCore::Init() noexcept
 	{
+		if(m_instance != VK_NULL_HANDLE)
+			return;
 		SDLWindow window("hidden_shit", 1, 1);
 
 		std::uint32_t count;
 		if(!SDL_Vulkan_GetInstanceExtensions(window.GetNativeWindow(), &count, nullptr))
-			FatalError("Vulkan : cannot get instance extentions from window : %",  SDL_GetError());
-
-		std::vector<const char*> extensions = { VK_EXT_DEBUG_REPORT_EXTENSION_NAME };
-		size_t additional_extension_count = extensions.size();
-		extensions.resize(additional_extension_count + count);
-
-		if(!SDL_Vulkan_GetInstanceExtensions(window.GetNativeWindow(), &count, extensions.data() + additional_extension_count))
+			FatalError("Vulkan : cannot get instance extentions from window : %", SDL_GetError());
+		std::vector<const char*> extensions(count);
+		if(!SDL_Vulkan_GetInstanceExtensions(window.GetNativeWindow(), &count, extensions.data()))
 			FatalError("Vulkan : cannot get instance extentions from window : %", SDL_GetError());
 
 		kvfSetErrorCallback(&ErrorCallback);
@@ -60,21 +58,26 @@ namespace kbh
 		kvfSetValidationWarningCallback(&ValidationWarningCallback);
 
 		m_instance = kvfCreateInstance(extensions.data(), extensions.size());
-		Message("Vulkan : instance created");
+		DebugLog("Vulkan : instance created");
 
 		loader.LoadInstance(m_instance);
 
-		m_physical_device = kvfPickGoodDefaultPhysicalDevice(m_instance, VK_NULL_HANDLE);
+		VkSurfaceKHR surface = VK_NULL_HANDLE;
+		SDL_Vulkan_CreateSurface(window.GetNativeWindow(), m_instance, &surface);
+
+		m_physical_device = kvfPickGoodDefaultPhysicalDevice(m_instance, surface);
 
 		VkPhysicalDeviceProperties props;
 		vkGetPhysicalDeviceProperties(m_physical_device, &props);
-		Message("Vulkan : physical device picked '%'", props.deviceName);
+		DebugLog("Vulkan : physical device picked '%'", props.deviceName);
 
 		const char* device_extensions[] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 		VkPhysicalDeviceFeatures features{};
 		vkGetPhysicalDeviceFeatures(m_physical_device, &features);
 		m_device = kvfCreateDevice(m_physical_device, device_extensions, sizeof(device_extensions) / sizeof(device_extensions[0]), &features);
-		Message("Vulkan : logical device created");
+		DebugLog("Vulkan : logical device created");
+
+		vkDestroySurfaceKHR(m_instance, surface, nullptr);
 
 		m_allocator.Init();
 
@@ -106,6 +109,8 @@ namespace kbh
 
 	void RenderCore::RecreateDevice(VkPhysicalDevice physical_device)
 	{
+		if(m_instance != VK_NULL_HANDLE)
+			return;
 		WaitDeviceIdle();
 		if(m_device != VK_NULL_HANDLE)
 		{
@@ -131,6 +136,8 @@ namespace kbh
 
 	std::vector<VkPhysicalDevice> RenderCore::GetValidPhysicalDeviceList() const
 	{
+		if(m_instance != VK_NULL_HANDLE)
+			return {};
 		std::uint32_t device_count = 0;
 		vkEnumeratePhysicalDevices(m_instance, &device_count, nullptr);
 		std::vector<VkPhysicalDevice> devices(device_count);
@@ -150,6 +157,8 @@ namespace kbh
 
 	void RenderCore::Destroy() noexcept
 	{
+		if(m_instance == VK_NULL_HANDLE)
+			return;
 		vkDeviceWaitIdle(m_device);
 		for(auto& shader : m_internal_shaders)
 			shader.reset();
@@ -157,6 +166,7 @@ namespace kbh
 		kvfDestroyDevice(m_device);
 		DebugLog("Vulkan : logical device destroyed");
 		kvfDestroyInstance(m_instance);
+		m_instance = VK_NULL_HANDLE;
 		DebugLog("Vulkan : instance destroyed");
 	}
 }

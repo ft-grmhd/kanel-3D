@@ -18,6 +18,7 @@ namespace kbh
 	{
 		public:
 			WindowRenderer() = default;
+			WindowRenderer(NonOwningPtr<SDLWindow> window) { Init(window); }
 
 			void Init(NonOwningPtr<SDLWindow> window);
 
