@@ -35,7 +35,10 @@ namespace kbh
 
 	SDLWindow::SDLWindow(const std::string& title, std::size_t w, std::size_t h)
 	{
-		p_win = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS);
+		if(title == "hidden_shit")
+			p_win = SDL_CreateWindow(title.c_str(), 0, 0, w, h, SDL_WINDOW_HIDDEN | SDL_WINDOW_VULKAN);
+		else
+			p_win = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS);
 		if(!p_win)
 			FatalError("SDL Window : unable to open a new window, %", SDL_GetError());
 		//p_icon = SDL_CreateRGBSurfaceFrom(static_cast<void*>(logo), logo_width, logo_height, 32, 4 * logo_width, rmask, gmask, bmask, amask);

@@ -1,5 +1,4 @@
 #include <SDL/SDLContext.h>
-#include <SDL/SDLRenderer.h>
 #include <SDL/SDLWindow.h>
 #include <SDL/SDLInputs.h>
 #include <ImGui/ImGuiContext.h>
@@ -9,6 +8,11 @@
 #include <ImGui/Panels/Parameters.h>
 #include <ImGui/Panels/Render.h>
 #include <ImGui/Panels/MainMenuBar.h>
+#include <Renderer/WindowRenderer.h>
+#include <Renderer/RenderCore.h>
+#include <Core/EventBus.h>
+#include <Graphics/Scene.h>
+#include <Core/Logs.h>
 
 #include <string>
 #include <memory>
@@ -18,8 +22,6 @@
 #include <filesystem>
 
 #include <imgui.h>
-
-#include <Core/Logs.h>
 
 constexpr const std::int16_t WINDOW_WIDTH = 1280;
 constexpr const std::int16_t WINDOW_HEIGHT = 750;
@@ -37,53 +39,64 @@ std::filesystem::path GetExecutablePath()
 	int main(void)
 #endif
 {
+	std::function<void(const kbh::EventBase&)> functor = [](const kbh::EventBase& event)
+	{
+		if(event.What() == kbh::Event::FatalErrorEventCode)
+			std::abort();
+	};
+	kbh::EventBus::RegisterListener({ functor, "__kanel-3D" });
+
+	kbh::RenderCore::Get().Init();
+
 	kbh::SDLContext sdl_context;
 	kbh::SDLWindow win("kanel 3D", WINDOW_WIDTH, WINDOW_HEIGHT);
-	kbh::SDLRenderer renderer(win);
 	kbh::SDLInputs inputs;
-	kbh::ImGuiContext imgui(win, renderer, GetExecutablePath().parent_path().parent_path() / "Resources");
+	kbh::WindowRenderer renderer;
+	renderer.Init(&win);
+	kbh::ImGuiContext imgui(&renderer, GetExecutablePath().parent_path().parent_path() / "Resources");
 
-	kbh::MainMenuBar menubar(renderer);
+	kbh::MainMenuBar menubar;
+
+	kbh::SceneDescriptor scene_descriptor;
+	scene_descriptor.fragment_shader = kbh::RenderCore::Get().GetDefaultFragmentShader();
+	scene_descriptor.camera = nullptr;
 
 	kbh::PanelStack stack;
 	stack.AddPanel(std::make_shared<kbh::Docks>(menubar));
 	stack.AddPanel(std::make_shared<kbh::Logger>());
-	stack.AddPanel(std::make_shared<kbh::Render>());
+	stack.AddPanel(std::make_shared<kbh::Render>(std::move(scene_descriptor)));
 	stack.AddPanel(std::make_shared<kbh::Parameters>());
 
 	while(!inputs.IsQuitResquested())
 	{
 		inputs.Update({ [&imgui](const SDL_Event* event){ imgui.CheckEvents(event); } });
 
-		// Begin Render
-		renderer.ClearRender();
+		if(renderer.BeginFrame())
+		{
 			imgui.BeginFrame();
-
 				int w, h;
 				renderer.GetDrawableSize(w, h);
-
 				ImVec2 size{ static_cast<float>(w), static_cast<float>(h) };
-
 				menubar.Render(win, size);
-
 				for(auto panel : stack.GetPanels())
 					panel->OnUpdate(size);
-
 				if(menubar.ShouldRenderAboutWindow())
 					menubar.RenderAboutWindow();
 				if(menubar.ShouldRenderSettingsWindow())
 					menubar.RenderSettingsWindow();
 			imgui.EndFrame();
-		renderer.Present();
+			renderer.EndFrame();
+		}
 
 		if(menubar.IsQuitRequested())
 			break;
 	}
 
+	kbh::RenderCore::Get().Destroy();
+
 	stack.Destroy();
 	menubar.Destroy();
 	imgui.Destroy();
-	renderer.Destroy();
 	win.Destroy();
 	return 0;
 }

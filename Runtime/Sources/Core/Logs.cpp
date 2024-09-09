@@ -60,7 +60,7 @@ namespace kbh
 		if(type == LogType::FatalError)
 		{
 			std::cout << Ansi::bg_red << "Fatal Error: emergency exit" << Ansi::bg_def << std::endl;
-			EventBus::Send("__kanel-3D_Core", Internal::FatalErrorEvent{});
+			EventBus::Send("__kanel-3D", Internal::FatalErrorEvent{});
 		}
 	}
 }

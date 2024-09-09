@@ -4,12 +4,16 @@
 #include <vector>
 #include <cstdint>
 
-#include <Renderer/RenderCore.h>
-#include <Renderer/Vulkan/VulkanLoader.h>
 #include <Core/Logs.h>
+#include <Maths/Mat4.h>
+#include <Graphics/NzslLoader.h>
+#include <Renderer/RenderCore.h>
+#include <Renderer/Pipelines/Shader.h>
+#include <Graphics/BuiltinNzslShaders.h>
+#include <Renderer/Vulkan/VulkanLoader.h>
 
 #define KVF_IMPLEMENTATION
-#ifdef KANLE_3D_DEBUG
+#ifdef KANEL_3D_DEBUG
 	#define KVF_ENABLE_VALIDATION_LAYERS
 #endif
 #include <kvf.h>
@@ -17,21 +21,6 @@
 namespace kbh
 {
 	static VulkanLoader loader;
-
-	std::optional<std::uint32_t> FindMemoryType(std::uint32_t type_filter, VkMemoryPropertyFlags properties, bool error)
-	{
-		VkPhysicalDeviceMemoryProperties mem_properties;
-		vkGetPhysicalDeviceMemoryProperties(RenderCore::Get().GetPhysicalDevice(), &mem_properties);
-
-		for(std::uint32_t i = 0; i < mem_properties.memoryTypeCount; i++)
-		{
-			if((type_filter & (1 << i)) && (mem_properties.memoryTypes[i].propertyFlags & properties) == properties)
-				return i;
-		}
-		if(error)
-			FatalError("Vulkan : failed to find suitable memory type");
-		return std::nullopt;
-	}
 
 	void ErrorCallback(const char* message) noexcept
 	{
@@ -53,36 +42,80 @@ namespace kbh
 
 	void RenderCore::Init() noexcept
 	{
-		SDL_Window* win = SDL_CreateWindow("", 0, 0, 1, 1, SDL_WINDOW_VULKAN | SDL_WINDOW_HIDDEN);
-		if(!win)
-			FatalError("Vulkan : cannot get instance extentions from window : %",  SDL_GetError());
+		SDLWindow window("hidden_shit", 1, 1);
 
 		std::uint32_t count;
-		if(!SDL_Vulkan_GetInstanceExtensions(win, &count, nullptr))
+		if(!SDL_Vulkan_GetInstanceExtensions(window.GetNativeWindow(), &count, nullptr))
 			FatalError("Vulkan : cannot get instance extentions from window : %",  SDL_GetError());
 
 		std::vector<const char*> extensions = { VK_EXT_DEBUG_REPORT_EXTENSION_NAME };
 		size_t additional_extension_count = extensions.size();
 		extensions.resize(additional_extension_count + count);
 
-		if(!SDL_Vulkan_GetInstanceExtensions(win, &count, extensions.data() + additional_extension_count))
+		if(!SDL_Vulkan_GetInstanceExtensions(window.GetNativeWindow(), &count, extensions.data() + additional_extension_count))
 			FatalError("Vulkan : cannot get instance extentions from window : %", SDL_GetError());
 
 		kvfSetErrorCallback(&ErrorCallback);
 		kvfSetValidationErrorCallback(&ValidationErrorCallback);
 		kvfSetValidationWarningCallback(&ValidationWarningCallback);
 
-		//kvfAddLayer("VK_LAYER_MESA_overlay");
-
 		m_instance = kvfCreateInstance(extensions.data(), extensions.size());
-		DebugLog("Vulkan : instance created");
+		Message("Vulkan : instance created");
 
 		loader.LoadInstance(m_instance);
 
-		VkSurfaceKHR surface = VK_NULL_HANDLE;
-		SDL_Vulkan_CreateSurface(win, m_instance, &surface);
+		m_physical_device = kvfPickGoodDefaultPhysicalDevice(m_instance, VK_NULL_HANDLE);
 
-		m_physical_device = kvfPickGoodDefaultPhysicalDevice(m_instance, surface);
+		VkPhysicalDeviceProperties props;
+		vkGetPhysicalDeviceProperties(m_physical_device, &props);
+		Message("Vulkan : physical device picked '%'", props.deviceName);
+
+		const char* device_extensions[] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+		VkPhysicalDeviceFeatures features{};
+		vkGetPhysicalDeviceFeatures(m_physical_device, &features);
+		m_device = kvfCreateDevice(m_physical_device, device_extensions, sizeof(device_extensions) / sizeof(device_extensions[0]), &features);
+		Message("Vulkan : logical device created");
+
+		m_allocator.Init();
+
+		NzslLoader loader;
+
+		ShaderLayout vertex_shader_layout(
+			{
+				{ 0,
+					ShaderSetLayout({ 
+						{ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER }
+					})
+				}
+			}, { ShaderPushConstantLayout({ 0, sizeof(Mat4f) * 2 }) }
+		);
+		m_internal_shaders[DEFAULT_VERTEX_SHADER_ID] = std::make_shared<Shader>(loader.LoadShader(std::string_view{ forward_vertex_shader }), ShaderType::Vertex, std::move(vertex_shader_layout));
+
+		ShaderLayout default_fragment_shader_layout(
+			{
+				{ 1,
+					ShaderSetLayout({ 
+						{ 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER },
+						{ 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER }
+					})
+				}
+			}, {}
+		);
+		m_internal_shaders[DEFAULT_FRAGMENT_SHADER_ID] = std::make_shared<Shader>(loader.LoadShader(std::string_view{ forward_fragment_shader }), ShaderType::Fragment, std::move(default_fragment_shader_layout));
+	}
+
+	void RenderCore::RecreateDevice(VkPhysicalDevice physical_device)
+	{
+		WaitDeviceIdle();
+		if(m_device != VK_NULL_HANDLE)
+		{
+			kvfDestroyDevice(m_device);
+			DebugLog("Vulkan : logical device destroyed");
+		}
+
+		std::int32_t graphics = kvfFindDeviceQueueFamily(physical_device, KVF_GRAPHICS_QUEUE);
+
+		m_physical_device = physical_device;
 
 		// just for style
 		VkPhysicalDeviceProperties props;
@@ -92,16 +125,35 @@ namespace kbh
 		const char* device_extensions[] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 		VkPhysicalDeviceFeatures features{};
 		vkGetPhysicalDeviceFeatures(m_physical_device, &features);
-		m_device = kvfCreateDevice(m_physical_device, device_extensions, sizeof(device_extensions) / sizeof(device_extensions[0]), &features);
+		m_device = kvfCreateDeviceCustomPhysicalDeviceAndQueues(m_physical_device, device_extensions, sizeof(device_extensions) / sizeof(device_extensions[0]), &features, graphics, -1, -1);
 		DebugLog("Vulkan : logical device created");
+	}
 
-		vkDestroySurfaceKHR(m_instance, surface, nullptr);
-		SDL_DestroyWindow(win);
+	std::vector<VkPhysicalDevice> RenderCore::GetValidPhysicalDeviceList() const
+	{
+		std::uint32_t device_count = 0;
+		vkEnumeratePhysicalDevices(m_instance, &device_count, nullptr);
+		std::vector<VkPhysicalDevice> devices(device_count);
+		vkEnumeratePhysicalDevices(m_instance, &device_count, devices.data());
+
+		for(auto it = devices.begin(); it < devices.end();)
+		{
+			std::int32_t graphics = kvfFindDeviceQueueFamily(*it, KVF_GRAPHICS_QUEUE);
+			if(graphics == -1)
+				it = devices.erase(it);
+			else
+				++it;
+		}
+
+		return devices;
 	}
 
 	void RenderCore::Destroy() noexcept
 	{
 		vkDeviceWaitIdle(m_device);
+		for(auto& shader : m_internal_shaders)
+			shader.reset();
+		m_allocator.Destroy();
 		kvfDestroyDevice(m_device);
 		DebugLog("Vulkan : logical device destroyed");
 		kvfDestroyInstance(m_instance);

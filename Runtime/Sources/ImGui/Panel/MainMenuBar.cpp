@@ -1,7 +1,7 @@
 #include <ImGui/Panels/MainMenuBar.h>
 #include <ImGui/ImGuiContext.h>
-#include <SDL/SDLRenderer.h>
 #include <SDL/SDLWindow.h>
+#include <Renderer/RenderCore.h>
 #include <Core/MaterialFont.h>
 
 #include <portable-file-dialogs.h>
@@ -12,10 +12,6 @@
 
 namespace kbh
 {
-	MainMenuBar::MainMenuBar(const SDLRenderer& renderer) : m_renderer(renderer)
-	{
-	}
-
 	void MainMenuBar::Render(const SDLWindow& win, ImVec2 size) noexcept
 	{
 		ImGuiStyle* style = &ImGui::GetStyle();
@@ -118,7 +114,7 @@ namespace kbh
 		ImGui::TextUnformatted("General");
 		ImGui::Separator();
 
-		if(ImGui::BeginTable("general_settings_table", 2, ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_RowBg))
+		if(ImGui::BeginTable("general_settings_table", 2, ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH))
 		{
 			ImGui::TableSetupColumn("name", ImGuiTableColumnFlags_NoHeaderLabel | ImGuiTableColumnFlags_WidthFixed, ImGui::CalcTextSize("Global font scale").x + 10);
 			ImGui::TableSetupColumn("value", ImGuiTableColumnFlags_NoHeaderLabel);
@@ -191,7 +187,7 @@ namespace kbh
 		ImGui::TextUnformatted("Render");
 		ImGui::Separator();
 
-		if(ImGui::BeginTable("render_settings_table", 2, ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_RowBg))
+		if(ImGui::BeginTable("render_settings_table", 2, ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH))
 		{
 			ImGui::TableSetupColumn("name", ImGuiTableColumnFlags_NoHeaderLabel | ImGuiTableColumnFlags_WidthFixed, ImGui::CalcTextSize("GPU Selection").x + 10);
 			ImGui::TableSetupColumn("value", ImGuiTableColumnFlags_NoHeaderLabel);
@@ -199,11 +195,26 @@ namespace kbh
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
 
+			// TODO: block GPU selection during rendering
 			ImGui::TextUnformatted("GPU Selection");
 			ImGui::TableNextColumn();
-			if(ImGui::BeginCombo("##GPU_selector", "None"))
 			{
-				ImGui::EndCombo();
+				const std::vector<VkPhysicalDevice> devices = RenderCore::Get().GetValidPhysicalDeviceList();
+				VkPhysicalDeviceProperties props;
+				vkGetPhysicalDeviceProperties(RenderCore::Get().GetPhysicalDevice(), &props);
+				if(ImGui::BeginCombo("##GPU_selector", props.deviceName))
+				{
+					for(std::size_t i = 0; i < devices.size(); i++)
+					{
+						vkGetPhysicalDeviceProperties(devices[i], &props);
+						if(ImGui::Selectable(props.deviceName, devices[i] == RenderCore::Get().GetPhysicalDevice())) // Crash when selecting current GPU two times
+						{
+							if(RenderCore::Get().GetPhysicalDevice() != devices[i])
+								RenderCore::Get().RecreateDevice(devices[i]);
+						}
+					}
+					ImGui::EndCombo();
+				}
 			}
 
 			ImGui::TableNextRow();

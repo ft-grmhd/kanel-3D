@@ -5,11 +5,13 @@
 
 namespace kbh
 {
-	Render::Render() : Panel("Render") {}
+	Render::Render(SceneDescriptor descriptor) : Panel("Render"), m_scene(std::move(descriptor)) {}
 
 	void Render::OnAttach()
 	{
-		RenderCore::Get().Init();
+		m_renderer.Init();
+		m_scene_renderer.Init();
+		m_scene.Init(&m_renderer);
 	}
 
 	void Render::OnUpdate(ImVec2 size)
@@ -22,6 +24,8 @@ namespace kbh
 
 	void Render::OnQuit()
 	{
-		RenderCore::Get().Destroy();
+		m_scene.Destroy();
+		m_scene_renderer.Destroy();
+		m_renderer.Destroy();
 	}
 }

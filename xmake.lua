@@ -1,7 +1,9 @@
 add_repositories("local-repo Xmake")
+add_repositories("nazara-engine-repo https://github.com/NazaraEngine/xmake-repo")
 
-add_requires("imgui v1.90-docking", { configs = { sdl2 = true }})
-add_requires("libsdl", "libsdl_image", "kvf", "pfd")
+add_requires("libsdl", "libsdl_image", "kvf", "pfd", "vulkan-memory-allocator")
+add_requires("imgui v1.91.1-docking", { configs = { sdl2_no_renderer = true, vulkan = true }})
+add_requires("nzsl >=2023.12.31", { debug = is_mode("debug"), configs = { symbols = not is_mode("release"), shared = not is_plat("wasm", "android") and not has_config("static") } })
 
 add_rules("mode.debug", "mode.release")
 set_defaultmode("release")
@@ -15,16 +17,18 @@ set_optimize("fastest")
 target("kanel-3D")
 	set_default(true)
 	set_kind("binary")
-	
+
 	set_targetdir("./Bin")
 
-	add_packages("libsdl", "libsdl_image", "imgui", "kvf", "pfd")
+	add_packages("libsdl", "libsdl_image", "imgui", "kvf", "pfd", "vulkan-memory-allocator", "nzsl")
 
 	add_includedirs("Runtime/Includes/", "Runtime/Sources")
 
 	add_files("Runtime/Sources/**.cpp")
 
 	add_defines("SDL_MAIN_HANDLED")
+	add_defines("IMGUI_IMPL_VULKAN_NO_PROTOTYPES", "IMGUI_DISABLE_DEBUG_TOOLS")
+	add_defines("TARGET_WIDTH=1280", "TARGET_HEIGHT=750")
 
 	add_defines("VK_NO_PROTOTYPES")
 	if is_plat("windows", "mingw") then

@@ -8,7 +8,7 @@ namespace kbh
 	class MainMenuBar
 	{
 		public:
-			MainMenuBar(const class SDLRenderer& renderer);
+			MainMenuBar() = default;
 
 			void Render(const class SDLWindow& win, ImVec2 size) noexcept;
 			void RenderAboutWindow();
@@ -28,7 +28,6 @@ namespace kbh
 			void RenderRenderSettings();
 
 		private:
-			const class SDLRenderer& m_renderer;
 			float m_height;
 			bool m_render_about_window = false;
 			bool m_render_settings_window = false;

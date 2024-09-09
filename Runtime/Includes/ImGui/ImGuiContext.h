@@ -1,15 +1,18 @@
 #ifndef KANEL_3D_IMGUI_CONTEXT
 #define KANEL_3D_IMGUI_CONTEXT
 
+#include <kvf.h>
 #include <filesystem>
 #include <SDL2/SDL.h>
+
+#include <Renderer/WindowRenderer.h>
 
 namespace kbh
 {
 	class ImGuiContext
 	{
 		public:
-			ImGuiContext(const class SDLWindow& win, const class SDLRenderer& renderer, const std::filesystem::path& assets_path);
+			ImGuiContext(NonOwningPtr<WindowRenderer> renderer, const std::filesystem::path& assets_path);
 
 			void CheckEvents(const SDL_Event* event) const noexcept;
 			void BeginFrame() noexcept;
@@ -24,8 +27,13 @@ namespace kbh
 			static void SetCosyTheme();
 
 		private:
-			const class SDLRenderer& m_renderer;
-			bool m_is_init = false;
+			void CreateFramebuffers();
+
+		private:
+			std::vector<VkFramebuffer> m_framebuffers;
+			VkRenderPass m_renderpass = VK_NULL_HANDLE;
+			VkDescriptorPool m_pool = VK_NULL_HANDLE;
+			NonOwningPtr<WindowRenderer> p_renderer;
 	};
 }
 
