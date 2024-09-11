@@ -29,10 +29,12 @@ namespace kbh
 		m_cursors[SDL_SYSTEM_CURSOR_SIZEALL] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
 		m_cursors[SDL_SYSTEM_CURSOR_NO] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
 		m_cursors[SDL_SYSTEM_CURSOR_HAND] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+		DebugLog("SDL : sdl initialized");
 	}
 
 	SDLContext::~SDLContext()
 	{
 		SDL_Quit();
+		DebugLog("SDL : sdl uninitialized");
 	}
 }

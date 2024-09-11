@@ -8,7 +8,7 @@
 #include <ImGui/Panels/Parameters.h>
 #include <ImGui/Panels/Render.h>
 #include <ImGui/Panels/MainMenuBar.h>
-#include <Renderer/WindowRenderer.h>
+#include <Renderer/Renderer.h>
 #include <Renderer/RenderCore.h>
 #include <Core/EventBus.h>
 #include <Graphics/Scene.h>
@@ -33,6 +33,7 @@ std::filesystem::path GetExecutablePath()
 	return std::string(result, (count > 0) ? count : 0);
 }
 
+// Windows shit
 #if defined(_WIN32) || defined(_WIN64)
 	int WINAPI WinMain([[maybe_unused]]HINSTANCE hInstance, [[maybe_unused]]HINSTANCE hPrevInstance, [[maybe_unused]]LPSTR lpCmdLine, [[maybe_unused]]int nCmdShow)
 #else
@@ -49,8 +50,8 @@ std::filesystem::path GetExecutablePath()
 	kbh::SDLContext sdl_context;
 	kbh::SDLWindow win("kanel 3D", WINDOW_WIDTH, WINDOW_HEIGHT);
 	kbh::SDLInputs inputs;
-	kbh::WindowRenderer renderer(&win);
-	kbh::ImGuiContext imgui(&renderer, GetExecutablePath().parent_path().parent_path() / "Resources");
+	kbh::Renderer renderer(&win);
+	kbh::ImGuiContext imgui(&renderer, GetExecutablePath().parent_path().parent_path().parent_path() / "Resources");
 
 	kbh::MainMenuBar menubar;
 
@@ -61,7 +62,7 @@ std::filesystem::path GetExecutablePath()
 	kbh::PanelStack stack;
 	stack.AddPanel(std::make_shared<kbh::Docks>(menubar));
 	stack.AddPanel(std::make_shared<kbh::Logger>());
-	stack.AddPanel(std::make_shared<kbh::Render>(std::move(scene_descriptor)));
+	stack.AddPanel(std::make_shared<kbh::Render>(&renderer, std::move(scene_descriptor)));
 	stack.AddPanel(std::make_shared<kbh::Parameters>());
 
 	while(!inputs.IsQuitResquested())

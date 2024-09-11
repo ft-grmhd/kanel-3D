@@ -1,16 +1,17 @@
 add_repositories("local-repo Xmake")
 add_repositories("nazara-engine-repo https://github.com/NazaraEngine/xmake-repo")
 
-add_requires("libsdl", "libsdl_image", "kvf", "pfd", "vulkan-memory-allocator")
-add_requires("imgui v1.91.1-docking", { configs = { sdl2_no_renderer = true, vulkan = true }})
-add_requires("nzsl >=2023.12.31", { debug = is_mode("debug"), configs = { symbols = not is_mode("release"), shared = not is_plat("wasm", "android") and not has_config("static") } })
+add_requires("libsdl", { configs = { shared = false } })
+add_requires("kvf", "pfd", "vulkan-memory-allocator")
+add_requires("imgui-without-god-damn-vulkan-sdk v1.91.0-docking", { debug = true, configs = { sdl2_no_renderer = true, vulkan = true, shared = false }})
+add_requires("nzsl >=2023.12.31", { configs = { shared = false } })
 
 add_rules("mode.debug", "mode.release")
 set_defaultmode("release")
 set_languages("cxx20")
 
-set_objectdir("build/Objects/$(os)_$(arch)")
 set_targetdir("build/$(os)_$(arch)")
+set_objectdir("build/$(os)_$(arch)/Objects")
 
 set_optimize("fastest")
 
@@ -18,13 +19,15 @@ target("kanel-3D")
 	set_default(true)
 	set_kind("binary")
 
-	set_targetdir("./Bin")
-
-	add_packages("libsdl", "libsdl_image", "imgui", "kvf", "pfd", "vulkan-memory-allocator", "nzsl")
+	add_packages("libsdl", "imgui-without-god-damn-vulkan-sdk", "kvf", "pfd", "vulkan-memory-allocator", "nzsl")
 
 	add_includedirs("Runtime/Includes/", "Runtime/Sources")
 
 	add_files("Runtime/Sources/**.cpp")
+
+	if is_plat("linux") then
+		add_syslinks("dl")
+	end
 
 	add_defines("SDL_MAIN_HANDLED")
 	add_defines("IMGUI_IMPL_VULKAN_NO_PROTOTYPES", "IMGUI_DISABLE_DEBUG_TOOLS")
@@ -47,4 +50,9 @@ target("kanel-3D")
 		set_fpmodels("fast")
 		add_vectorexts("sse", "sse2", "sse3", "ssse3")
 	end
+
+	on_clean(function(target)
+		print("Removing " .. target:targetdir())
+		os.rm(target:targetdir())
+	end)
 target_end()

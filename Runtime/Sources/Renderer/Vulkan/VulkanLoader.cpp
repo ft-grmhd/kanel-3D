@@ -1,7 +1,22 @@
 #include <Renderer/Vulkan/VulkanLoader.h>
 #include <Core/Logs.h>
 
-#include <dlfcn.h>
+#ifdef _WIN32
+	__declspec(dllimport) HMODULE __stdcall LoadLibraryA(LPCSTR);
+	__declspec(dllimport) FARPROC __stdcall GetProcAddress(HMODULE, LPCSTR);
+	__declspec(dllimport) int __stdcall FreeLibrary(HMODULE);
+#endif
+
+#if defined(MLX_COMPILER_GCC)
+	#define DISABLE_GCC_PEDANTIC_WARNINGS \
+		_Pragma("GCC diagnostic push") \
+		_Pragma("GCC diagnostic ignored \"-Wpedantic\"")
+	#define RESTORE_GCC_PEDANTIC_WARNINGS \
+		_Pragma("GCC diagnostic pop")
+#else
+	#define DISABLE_GCC_PEDANTIC_WARNINGS
+	#define RESTORE_GCC_PEDANTIC_WARNINGS
+#endif
 
 namespace kbh
 {
@@ -15,12 +30,43 @@ namespace kbh
 
 	VulkanLoader::VulkanLoader()
 	{
-		p_module = dlopen("libvulkan.so.1", RTLD_NOW | RTLD_LOCAL);
-		if(!p_module)
-			p_module = dlopen("libvulkan.so", RTLD_NOW | RTLD_LOCAL);
-		if(!p_module)
-			FatalError("Vulkan loader : failed to load libvulkan");
-		vkGetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)dlsym(p_module, "vkGetInstanceProcAddr");
+		#if defined(_WIN32)
+			p_module = LoadLibraryA("vulkan-1.dll");
+			if(!p_module)
+				FatalError("Vulkan loader : failed to load libvulkan");
+			vkGetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)(void(*)(void))GetProcAddress(p_module, "vkGetInstanceProcAddr");
+		#elif defined(__APPLE__)
+			p_module = dlopen("libvulkan.dylib", RTLD_NOW | RTLD_LOCAL);
+			if(!p_module)
+				p_module = dlopen("libvulkan.1.dylib", RTLD_NOW | RTLD_LOCAL);
+			if(!p_module)
+				p_module = dlopen("libMoltenVK.dylib", RTLD_NOW | RTLD_LOCAL);
+
+			// Add support for using Vulkan and MoltenVK in a Framework. App store rules for iOS
+			// strictly enforce no .dylib's. If they aren't found it just falls through
+			if(!p_module)
+				p_module = dlopen("vulkan.framework/vulkan", RTLD_NOW | RTLD_LOCAL);
+			if(!p_module)
+				p_module = dlopen("MoltenVK.framework/MoltenVK", RTLD_NOW | RTLD_LOCAL);
+
+			// modern versions of macOS don't search /usr/local/lib automatically contrary to what man dlopen says
+			// Vulkan SDK uses this as the system-wide installation location, so we're going to fallback to this if all else fails
+			if(!p_module && getenv("DYLD_FALLBACK_LIBRARY_PATH") == NULL)
+				p_module = dlopen("/usr/local/lib/libvulkan.dylib", RTLD_NOW | RTLD_LOCAL);
+			if(!p_module)
+				FatalError("Vulkan loader : failed to load libvulkan");
+
+			vkGetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)dlsym(p_module, "vkGetInstanceProcAddr");
+		#else
+			p_module = dlopen("libvulkan.so.1", RTLD_NOW | RTLD_LOCAL);
+			if(!p_module)
+				p_module = dlopen("libvulkan.so", RTLD_NOW | RTLD_LOCAL);
+			if(!p_module)
+				FatalError("Vulkan loader : failed to load libvulkan");
+			DISABLE_GCC_PEDANTIC_WARNINGS
+			vkGetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)dlsym(p_module, "vkGetInstanceProcAddr");
+			RESTORE_GCC_PEDANTIC_WARNINGS
+		#endif
 		DebugLog("Vulkan loader : libvulkan loaded");
 		LoadGlobalFunctions(NULL, Internal::vkGetInstanceProcAddrStub);
 	}
@@ -205,7 +251,11 @@ namespace kbh
 
 	VulkanLoader::~VulkanLoader()
 	{
-		dlclose(p_module);
+		#if defined(_WIN32)
+			FreeLibrary((HMODULE)p_module);
+		#else
+			dlclose(p_module);
+		#endif
 		p_module = nullptr;
 		DebugLog("Vulkan loader : libvulkan unloaded");
 	}

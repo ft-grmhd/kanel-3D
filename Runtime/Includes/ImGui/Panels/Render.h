@@ -13,7 +13,7 @@ namespace kbh
 	class Render : public Panel
 	{
 		public:
-			Render(SceneDescriptor descriptor);
+			Render(NonOwningPtr<Renderer> renderer, SceneDescriptor descriptor);
 
 			void OnAttach() override;
 			void OnUpdate(ImVec2 size) override;
@@ -22,11 +22,11 @@ namespace kbh
 			~Render() override = default;
 
 		private:
-			Renderer m_renderer;
 			Scene m_scene;
 			SceneRenderer m_scene_renderer;
 			Texture m_render_texture;
 			ImTextureID m_imgui_image;
+			NonOwningPtr<Renderer> p_renderer;
 	};
 }
 

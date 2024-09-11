@@ -20,7 +20,7 @@
 
 namespace kbh
 {
-	static VulkanLoader loader;
+	static std::unique_ptr<VulkanLoader> vulkan_loader;
 
 	void ErrorCallback(const char* message) noexcept
 	{
@@ -45,6 +45,7 @@ namespace kbh
 		if(m_instance != VK_NULL_HANDLE)
 			return;
 		SDLWindow window("hidden_shit", 1, 1);
+		vulkan_loader = std::make_unique<VulkanLoader>();
 
 		std::uint32_t count;
 		if(!SDL_Vulkan_GetInstanceExtensions(window.GetNativeWindow(), &count, nullptr))
@@ -60,7 +61,7 @@ namespace kbh
 		m_instance = kvfCreateInstance(extensions.data(), extensions.size());
 		DebugLog("Vulkan : instance created");
 
-		loader.LoadInstance(m_instance);
+		vulkan_loader->LoadInstance(m_instance);
 
 		VkSurfaceKHR surface = VK_NULL_HANDLE;
 		SDL_Vulkan_CreateSurface(window.GetNativeWindow(), m_instance, &surface);
@@ -168,5 +169,6 @@ namespace kbh
 		kvfDestroyInstance(m_instance);
 		m_instance = VK_NULL_HANDLE;
 		DebugLog("Vulkan : instance destroyed");
+		vulkan_loader.reset();
 	}
 }

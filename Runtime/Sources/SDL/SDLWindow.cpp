@@ -51,6 +51,7 @@ namespace kbh
 			SDL_SetWindowHitTest(p_win, hitTestCallback, nullptr);
 		}
 		//p_icon = SDL_CreateRGBSurfaceFrom(static_cast<void*>(logo), logo_width, logo_height, 32, 4 * logo_width, rmask, gmask, bmask, amask);
+		DebugLog("SDL : window created");
 	}
 
 	void SDLWindow::Destroy() noexcept
@@ -65,6 +66,7 @@ namespace kbh
 			SDL_FreeSurface(p_icon);
 			p_icon = nullptr;
 		}
+		DebugLog("SDL : window destroyed");
 	}
 
 	SDLWindow::~SDLWindow()

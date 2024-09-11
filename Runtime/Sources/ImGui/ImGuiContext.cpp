@@ -9,7 +9,7 @@
 
 namespace kbh
 {
-	ImGuiContext::ImGuiContext(NonOwningPtr<WindowRenderer> renderer, const std::filesystem::path& assets_path) : p_renderer(renderer)
+	ImGuiContext::ImGuiContext(NonOwningPtr<Renderer> renderer, const std::filesystem::path& assets_path) : p_renderer(renderer)
 	{
 		std::function<void(const EventBase&)> functor = [this](const EventBase& event)
 		{
@@ -55,7 +55,7 @@ namespace kbh
 		pool_info.maxSets = 1000 * IM_ARRAYSIZE(pool_sizes);
 		pool_info.poolSizeCount = (std::uint32_t)IM_ARRAYSIZE(pool_sizes);
 		pool_info.pPoolSizes = pool_sizes;
-		vkCreateDescriptorPool(RenderCore::Get().GetDevice(), &pool_info, nullptr, &m_pool);
+		kvfCheckVk(vkCreateDescriptorPool(RenderCore::Get().GetDevice(), &pool_info, nullptr, &m_pool));
 
 		// Setup Platform/Renderer bindings
 		ImGui_ImplVulkan_LoadFunctions([](const char* function_name, void* vulkan_instance) {
@@ -70,19 +70,19 @@ namespace kbh
 
 		ImGui_ImplSDL2_InitForVulkan(p_renderer->GetWindow()->GetNativeWindow());
 		ImGui_ImplVulkan_InitInfo init_info{};
-			init_info.Instance = RenderCore::Get().GetInstance();
-			init_info.PhysicalDevice = RenderCore::Get().GetPhysicalDevice();
-			init_info.Device = RenderCore::Get().GetDevice();
-			init_info.QueueFamily = kvfGetDeviceQueueFamily(RenderCore::Get().GetDevice(), KVF_GRAPHICS_QUEUE);
-			init_info.Queue = kvfGetDeviceQueue(RenderCore::Get().GetDevice(), KVF_GRAPHICS_QUEUE);
-			init_info.DescriptorPool = m_pool;
-			init_info.Allocator = nullptr;
-			init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-			init_info.Subpass = 0;
-			init_info.MinImageCount = kvfGetSwapchainMinImagesCount(p_renderer->GetSwapchain());
-			init_info.ImageCount = p_renderer->GetSwapchainImages().size();
-			init_info.CheckVkResultFn = [](VkResult result){ kvfCheckVk(result); };
-			init_info.RenderPass = m_renderpass;
+		init_info.Instance = RenderCore::Get().GetInstance();
+		init_info.PhysicalDevice = RenderCore::Get().GetPhysicalDevice();
+		init_info.Device = RenderCore::Get().GetDevice();
+		init_info.QueueFamily = kvfGetDeviceQueueFamily(RenderCore::Get().GetDevice(), KVF_GRAPHICS_QUEUE);
+		init_info.Queue = kvfGetDeviceQueue(RenderCore::Get().GetDevice(), KVF_GRAPHICS_QUEUE);
+		init_info.DescriptorPool = m_pool;
+		init_info.Allocator = nullptr;
+		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+		init_info.Subpass = 0;
+		init_info.MinImageCount = kvfGetSwapchainMinImagesCount(p_renderer->GetSwapchain());
+		init_info.ImageCount = p_renderer->GetSwapchainImages().size();
+		init_info.CheckVkResultFn = &kvfCheckVk;
+		init_info.RenderPass = m_renderpass;
 		ImGui_ImplVulkan_Init(&init_info);
 
 		static const ImWchar icons_ranges[] = { KBH_ICON_MIN_MD, KBH_ICON_MAX_16_MD, 0 };
