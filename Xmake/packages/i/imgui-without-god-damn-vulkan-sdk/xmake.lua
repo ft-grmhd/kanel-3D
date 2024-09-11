@@ -135,6 +135,7 @@ package("imgui-without-god-damn-vulkan-sdk")
         end
         if package:config("vulkan") then
             --package:add("deps", "vulkansdk")
+            package:add("deps", "vulkan-headers")
             package:add("defines", "IMGUI_IMPL_VULKAN_NO_PROTOTYPES")
         end
         if package:config("wgpu") then

@@ -123,6 +123,7 @@ target("imgui-without-god-damn-vulkan-sdk")
         add_files("backends/imgui_impl_vulkan.cpp")
         add_headerfiles("(backends/imgui_impl_vulkan.h)")
         add_defines("IMGUI_IMPL_VULKAN_NO_PROTOTYPES", "IMGUI_DISABLE_DEBUG_TOOLS")
+        add_packages("vulkan-headers")
         --add_packages("vulkansdk")
     end
 
