@@ -55,11 +55,11 @@ namespace kbh
 		pool_info.maxSets = 1000 * IM_ARRAYSIZE(pool_sizes);
 		pool_info.poolSizeCount = (std::uint32_t)IM_ARRAYSIZE(pool_sizes);
 		pool_info.pPoolSizes = pool_sizes;
-		kvfCheckVk(vkCreateDescriptorPool(RenderCore::Get().GetDevice(), &pool_info, nullptr, &m_pool));
+		kvfCheckVk(RenderCore::Get().vkCreateDescriptorPool(RenderCore::Get().GetDevice(), &pool_info, nullptr, &m_pool));
 
 		// Setup Platform/Renderer bindings
 		ImGui_ImplVulkan_LoadFunctions([](const char* function_name, void* vulkan_instance) {
-			return vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkan_instance)), function_name);
+			return RenderCore::Get().vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkan_instance)), function_name);
 		}, &RenderCore::Get().GetInstanceRef());
 
 		std::vector<VkAttachmentDescription> attachments;
@@ -123,7 +123,7 @@ namespace kbh
 			VkExtent2D fb_extent = kvfGetFramebufferSize(fb);
 			kvfBeginRenderPass(m_renderpass, p_renderer->GetActiveCommandBuffer(), fb, fb_extent, NULL, 0);
 			ImGui_ImplVulkan_RenderDrawData(draw_data, p_renderer->GetActiveCommandBuffer());
-			vkCmdEndRenderPass(p_renderer->GetActiveCommandBuffer());
+			RenderCore::Get().vkCmdEndRenderPass(p_renderer->GetActiveCommandBuffer());
 		}
 	}
 
@@ -137,7 +137,7 @@ namespace kbh
 			kvfDestroyFramebuffer(RenderCore::Get().GetDevice(), fb);
 		m_framebuffers.clear();
 		kvfDestroyRenderPass(RenderCore::Get().GetDevice(), m_renderpass);
-		vkDestroyDescriptorPool(RenderCore::Get().GetDevice(), m_pool, nullptr);
+		RenderCore::Get().vkDestroyDescriptorPool(RenderCore::Get().GetDevice(), m_pool, nullptr);
 	}
 
 	void ImGuiContext::CreateFramebuffers()

@@ -1,9 +1,7 @@
 #ifndef KANEL_3D_VULKAN_LOADER
 #define KANEL_3D_VULKAN_LOADER
 
-#include <Renderer/Vulkan/VulkanPrototypes.h>
-
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__CYGWIN__)
 	typedef const char* LPCSTR;
 	typedef struct HINSTANCE__* HINSTANCE;
 	typedef HINSTANCE HMODULE;
@@ -18,6 +16,8 @@
 	#include <dlfcn.h>
 #endif
 
+#include <kvf.h>
+
 namespace kbh
 {
 	class VulkanLoader
@@ -25,6 +25,7 @@ namespace kbh
 		public:
 			VulkanLoader();
 			void LoadInstance(VkInstance instance);
+			void LoadDevice(VkDevice device);
 			~VulkanLoader();
 
 		private:
@@ -33,7 +34,7 @@ namespace kbh
 			void LoadDeviceFunctions(void* context, PFN_vkVoidFunction (*load)(void*, const char*)) noexcept;
 
 		private:
-			#ifdef _WIN32
+			#if defined(_WIN32) || defined(__CYGWIN__)
 				HMODULE p_module = nullptr;
 			#else
 				void* p_module = nullptr;

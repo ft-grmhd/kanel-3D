@@ -31,7 +31,6 @@ namespace kbh
 		};
 		EventBus::RegisterListener({ functor, "__WindowRenderer" });
 
-		RenderCore::Get().Init();
 		for(std::size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
 			m_image_available_semaphores[i] = kvfCreateSemaphore(RenderCore::Get().GetDevice());
@@ -55,7 +54,7 @@ namespace kbh
 	bool Renderer::BeginFrame()
 	{
 		kvfWaitForFence(RenderCore::Get().GetDevice(), m_cmd_fences[m_current_frame_index]);
-		VkResult result = vkAcquireNextImageKHR(RenderCore::Get().GetDevice(), m_swapchain, UINT64_MAX, m_image_available_semaphores[m_current_frame_index], VK_NULL_HANDLE, &m_swapchain_image_index);
+		VkResult result = RenderCore::Get().vkAcquireNextImageKHR(RenderCore::Get().GetDevice(), m_swapchain, UINT64_MAX, m_image_available_semaphores[m_current_frame_index], VK_NULL_HANDLE, &m_swapchain_image_index);
 		if(result == VK_ERROR_OUT_OF_DATE_KHR)
 		{
 			DestroySwapchain();
@@ -65,7 +64,7 @@ namespace kbh
 		}
 		else if(result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 			FatalError("Vulkan error : failed to acquire swapchain image, %", kvfVerbaliseVkResult(result));
-		vkResetCommandBuffer(m_cmd_buffers[m_current_frame_index], 0);
+		RenderCore::Get().vkResetCommandBuffer(m_cmd_buffers[m_current_frame_index], 0);
 		kvfBeginCommandBuffer(m_cmd_buffers[m_current_frame_index], 0);
 		m_drawcalls = 0;
 		m_polygons_drawn = 0;
@@ -103,7 +102,7 @@ namespace kbh
 		std::uint32_t images_count = kvfGetSwapchainImagesCount(m_swapchain);
 		std::vector<VkImage> tmp(images_count);
 		m_swapchain_images.resize(images_count);
-		vkGetSwapchainImagesKHR(RenderCore::Get().GetDevice(), m_swapchain, &images_count, tmp.data());
+		RenderCore::Get().vkGetSwapchainImagesKHR(RenderCore::Get().GetDevice(), m_swapchain, &images_count, tmp.data());
 		VkCommandBuffer cmd = kvfCreateCommandBuffer(RenderCore::Get().GetDevice());
 		kvfBeginCommandBuffer(cmd, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 		for(std::size_t i = 0; i < images_count; i++)
@@ -141,7 +140,7 @@ namespace kbh
 			DebugLog("Vulkan : fence destroyed");
 		}
 		DestroySwapchain();
-		vkDestroySurfaceKHR(RenderCore::Get().GetInstance(), m_surface, nullptr);
+		RenderCore::Get().vkDestroySurfaceKHR(RenderCore::Get().GetInstance(), m_surface, nullptr);
 		DebugLog("Vulkan : surface destroyed");
 		m_surface = VK_NULL_HANDLE;
 	}

@@ -50,6 +50,7 @@ std::filesystem::path GetExecutablePath()
 	kbh::SDLContext sdl_context;
 	kbh::SDLWindow win("kanel 3D", WINDOW_WIDTH, WINDOW_HEIGHT);
 	kbh::SDLInputs inputs;
+	kbh::RenderCore render_core;
 	kbh::Renderer renderer(&win);
 	kbh::ImGuiContext imgui(&renderer, GetExecutablePath().parent_path().parent_path().parent_path() / "Resources");
 
@@ -95,6 +96,5 @@ std::filesystem::path GetExecutablePath()
 	imgui.Destroy();
 	renderer.Destroy();
 	win.Destroy();
-	kbh::RenderCore::Get().Destroy();
 	return 0;
 }

@@ -49,27 +49,16 @@ namespace kbh
 			return;
 		bool is_single_time_cmd_buffer = (cmd == VK_NULL_HANDLE);
 		if(is_single_time_cmd_buffer)
-		{
 			cmd = kvfCreateCommandBuffer(RenderCore::Get().GetDevice());
-			kvfBeginCommandBuffer(cmd, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-		}
 		KvfImageType kvf_type = KVF_IMAGE_OTHER;
 		switch(m_type)
 		{
 			case ImageType::Color: kvf_type = KVF_IMAGE_COLOR; break;
 			case ImageType::Depth: kvf_type = KVF_IMAGE_DEPTH; break;
-
 			default: break;
 		}
 		kvfTransitionImageLayout(RenderCore::Get().GetDevice(), m_image, kvf_type, cmd, m_format, m_layout, new_layout, is_single_time_cmd_buffer);
 		m_layout = new_layout;
-		if(is_single_time_cmd_buffer)
-		{
-			vkEndCommandBuffer(cmd);
-			VkFence fence = kvfCreateFence(RenderCore::Get().GetDevice());
-			kvfSubmitSingleTimeCommandBuffer(RenderCore::Get().GetDevice(), cmd, KVF_GRAPHICS_QUEUE, fence);
-			kvfDestroyFence(RenderCore::Get().GetDevice(), fence);
-		}
 	}
 
 	void Image::Clear(VkCommandBuffer cmd, Vec4f color)
@@ -86,7 +75,7 @@ namespace kbh
 			TransitionLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, cmd);
 			subresource_range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 			VkClearColorValue clear_color = VkClearColorValue({ { color.x, color.y, color.z, color.w } });
-			vkCmdClearColorImage(cmd, m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clear_color, 1, &subresource_range);
+			RenderCore::Get().vkCmdClearColorImage(cmd, m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clear_color, 1, &subresource_range);
 			TransitionLayout(old_layout, cmd);
 		}
 		else if(m_type == ImageType::Depth)
@@ -94,7 +83,7 @@ namespace kbh
 			VkClearDepthStencilValue clear_depth_stencil = { 1.0f, 1 };
 			subresource_range.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 			TransitionLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, cmd);
-			vkCmdClearDepthStencilImage(cmd, m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clear_depth_stencil, 1, &subresource_range);
+			RenderCore::Get().vkCmdClearDepthStencilImage(cmd, m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clear_depth_stencil, 1, &subresource_range);
 		}
 	}
 

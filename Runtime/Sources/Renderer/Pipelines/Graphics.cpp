@@ -28,7 +28,7 @@ namespace kbh
 		CreateFramebuffers(m_attachments, descriptor.clear_color_attachments);
 
 		VkPhysicalDeviceFeatures features{};
-		vkGetPhysicalDeviceFeatures(RenderCore::Get().GetPhysicalDevice(), &features);
+		RenderCore::Get().vkGetPhysicalDeviceFeatures(RenderCore::Get().GetPhysicalDevice(), &features);
 
 		KvfGraphicsPipelineBuilder* builder = kvfCreateGPipelineBuilder();
 		kvfGPipelineBuilderAddShaderStage(builder, p_vertex_shader->GetShaderStage(), p_vertex_shader->GetShaderModule(), "main");
@@ -71,12 +71,12 @@ namespace kbh
 		viewport.height = fb_extent.height;
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
-		vkCmdSetViewport(command_buffer, 0, 1, &viewport);
+		RenderCore::Get().vkCmdSetViewport(command_buffer, 0, 1, &viewport);
 
 		VkRect2D scissor{};
 		scissor.offset = { 0, 0 };
 		scissor.extent = fb_extent;
-		vkCmdSetScissor(command_buffer, 0, 1, &scissor);
+		RenderCore::Get().vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
 		for(int i = 0; i < m_clears.size(); i++)
 		{
@@ -90,13 +90,13 @@ namespace kbh
 			m_clears.back().depthStencil = VkClearDepthStencilValue{ 1.0f, 0 };
 
 		kvfBeginRenderPass(m_renderpass, command_buffer, fb, fb_extent, m_clears.data(), m_clears.size());
-		vkCmdBindPipeline(command_buffer, GetPipelineBindPoint(), GetPipeline());
+		RenderCore::Get().vkCmdBindPipeline(command_buffer, GetPipelineBindPoint(), GetPipeline());
 		return true;
 	}
 
 	void GraphicPipeline::EndPipeline(VkCommandBuffer command_buffer) noexcept
 	{
-		vkCmdEndRenderPass(command_buffer);
+		RenderCore::Get().vkCmdEndRenderPass(command_buffer);
 	}
 
 	void GraphicPipeline::Destroy() noexcept

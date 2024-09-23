@@ -15,6 +15,8 @@ set_objectdir("build/$(os)_$(arch)/Objects")
 
 set_optimize("fastest")
 
+option("unitybuild", { description = "Build the engine using unity build", default = false })
+
 target("kanel-3D")
 	set_default(true)
 	set_kind("binary")
@@ -25,11 +27,16 @@ target("kanel-3D")
 
 	add_files("Runtime/Sources/**.cpp")
 
+	if has_config("unitybuild") then
+		add_rules("c++.unity_build", { batchsize = 12 })
+	end
+
 	if is_plat("linux") then
 		add_syslinks("dl")
 	end
 
 	add_defines("SDL_MAIN_HANDLED")
+	add_defines("KVF_IMPL_VK_NO_PROTOTYPES")
 	add_defines("IMGUI_IMPL_VULKAN_NO_PROTOTYPES", "IMGUI_DISABLE_DEBUG_TOOLS")
 	add_defines("TARGET_WIDTH=1280", "TARGET_HEIGHT=750")
 

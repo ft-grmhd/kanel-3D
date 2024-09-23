@@ -8,9 +8,7 @@
 #include <vector>
 
 #include <SDL/SDLWindow.h>
-#include <Utils/Singleton.h>
 #include <Renderer/Memory.h>
-#include <Renderer/Vulkan/VulkanPrototypes.h>
 
 namespace kbh
 {
@@ -18,13 +16,10 @@ namespace kbh
 	constexpr const int DEFAULT_VERTEX_SHADER_ID = 0;
 	constexpr const int DEFAULT_FRAGMENT_SHADER_ID = 1;
 
-	class RenderCore : public Singleton<RenderCore>
+	class RenderCore
 	{
-		friend class Singleton<RenderCore>;
-
 		public:
-			void Init() noexcept;
-			void Destroy() noexcept;
+			RenderCore();
 
 			std::vector<VkPhysicalDevice> GetValidPhysicalDeviceList() const;
 			void RecreateDevice(VkPhysicalDevice physical_device);
@@ -35,16 +30,32 @@ namespace kbh
 			[[nodiscard]] inline VkPhysicalDevice GetPhysicalDevice() const noexcept { return m_physical_device; }
 			[[nodiscard]] inline GPUAllocator& GetAllocator() noexcept { return m_allocator; }
 
+			inline static bool IsInit() noexcept { return s_instance != nullptr; }
+			inline static RenderCore& Get() noexcept { return *s_instance; }
+
 			inline void WaitDeviceIdle() const noexcept { vkDeviceWaitIdle(m_device); }
 
 			[[nodiscard]] inline std::shared_ptr<class Shader> GetDefaultVertexShader() const { return m_internal_shaders[DEFAULT_VERTEX_SHADER_ID]; }
 			[[nodiscard]] inline std::shared_ptr<class Shader> GetDefaultFragmentShader() const { return m_internal_shaders[DEFAULT_FRAGMENT_SHADER_ID]; }
 
-		private:
-			RenderCore() = default;
-			~RenderCore() = default;
+			#define KANEL_3D_VULKAN_GLOBAL_FUNCTION(fn) PFN_##fn fn = nullptr;
+			#define KANEL_3D_VULKAN_INSTANCE_FUNCTION(fn) PFN_##fn fn = nullptr;
+			#define KANEL_3D_VULKAN_DEVICE_FUNCTION(fn) PFN_##fn fn = nullptr;
+				#include <Renderer/Vulkan/VulkanDefs.h>
+			#undef KANEL_3D_VULKAN_GLOBAL_FUNCTION
+			#undef KANEL_3D_VULKAN_INSTANCE_FUNCTION
+			#undef KANEL_3D_VULKAN_DEVICE_FUNCTION
+
+			~RenderCore();
 
 		private:
+			void LoadKVFGlobalVulkanFunctionPointers() const noexcept;
+			void LoadKVFInstanceVulkanFunctionPointers() const noexcept;
+			void LoadKVFDeviceVulkanFunctionPointers() const noexcept;
+
+		private:
+			static RenderCore* s_instance;
+
 			std::array<std::shared_ptr<class Shader>, 2> m_internal_shaders;
 			GPUAllocator m_allocator;
 			VkInstance m_instance = VK_NULL_HANDLE;

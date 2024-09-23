@@ -69,7 +69,7 @@ namespace kbh
 			ImGui::EndMainMenuBar();
 		}
 
-		ImGui::PopStyleColor(4);
+		//ImGui::PopStyleColor(4);
 	}
 
 	void MainMenuBar::RenderAboutWindow()
@@ -201,12 +201,12 @@ namespace kbh
 			{
 				const std::vector<VkPhysicalDevice> devices = RenderCore::Get().GetValidPhysicalDeviceList();
 				VkPhysicalDeviceProperties props;
-				vkGetPhysicalDeviceProperties(RenderCore::Get().GetPhysicalDevice(), &props);
+				RenderCore::Get().vkGetPhysicalDeviceProperties(RenderCore::Get().GetPhysicalDevice(), &props);
 				if(ImGui::BeginCombo("##GPU_selector", props.deviceName))
 				{
 					for(std::size_t i = 0; i < devices.size(); i++)
 					{
-						vkGetPhysicalDeviceProperties(devices[i], &props);
+						RenderCore::Get().vkGetPhysicalDeviceProperties(devices[i], &props);
 						if(ImGui::Selectable(props.deviceName, devices[i] == RenderCore::Get().GetPhysicalDevice())) // Crash when selecting current GPU two times
 						{
 							if(RenderCore::Get().GetPhysicalDevice() != devices[i])
