@@ -71,7 +71,7 @@ namespace kbh
 		init_info.RenderPass = p_renderer->GetSwapchain().GetRenderpass();
 		ImGui_ImplVulkan_Init(&init_info);
 
-		static const ImWchar icons_ranges[] = { KBH_ICON_MIN_MD, KBH_ICON_MAX_16_MD, 0 };
+		const ImWchar icons_ranges[] = { KBH_ICON_MIN_MD, KBH_ICON_MAX_16_MD, 0 };
 		ImFontConfig config;
 		config.MergeMode = true;
 		config.GlyphOffset.y = 4.0f;

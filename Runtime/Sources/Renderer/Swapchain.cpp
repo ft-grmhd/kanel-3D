@@ -32,10 +32,8 @@ namespace kbh
 		if(m_resize)
 		{
 			RenderCore::Get().WaitDeviceIdle();
-			DestroyFramebuffers();
-			DestroyRenderPass();
 			CreateSwapchain();
-			CreateRenderPass();
+			DestroyFramebuffers();
 			CreateFramebuffers();
 			EventBus::SendBroadcast(Internal::ResizeEventBroadcast{});
 		}
