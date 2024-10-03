@@ -66,12 +66,15 @@ std::filesystem::path GetExecutablePath()
 	stack.AddPanel(std::make_shared<kbh::Render>(&renderer, std::move(scene_descriptor)));
 	stack.AddPanel(std::make_shared<kbh::Parameters>());
 
-	while(!inputs.IsQuitResquested())
-	{
-		inputs.Update({ [&imgui](const SDL_Event* event){ imgui.CheckEvents(event); } });
+	std::vector<std::function<void(const SDL_Event*)>> input_hooks{
+		[&imgui](const SDL_Event* event){ imgui.CheckEvents(event); }
+	};
 
-		if(renderer.BeginFrame())
-		{
+	while(!inputs.IsQuitResquested() && !menubar.IsQuitRequested())
+	{
+		inputs.Update(input_hooks);
+
+		renderer.BeginFrame();
 			imgui.BeginFrame();
 				int w, h;
 				renderer.GetDrawableSize(w, h);
@@ -84,11 +87,7 @@ std::filesystem::path GetExecutablePath()
 				if(menubar.ShouldRenderSettingsWindow())
 					menubar.RenderSettingsWindow();
 			imgui.EndFrame();
-			renderer.EndFrame();
-		}
-
-		if(menubar.IsQuitRequested())
-			break;
+		renderer.EndFrame();
 	}
 
 	stack.Destroy();

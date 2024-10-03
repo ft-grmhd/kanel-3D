@@ -3,7 +3,7 @@
 
 namespace kbh
 {
-	constexpr const int RESIZE_MARGIN = 5;
+	constexpr int RESIZE_MARGIN = 7;
 	SDL_HitTestResult hitTestCallback(SDL_Window* win, const SDL_Point* area, [[maybe_unused]] void* data)
 	{
 		int w, h;

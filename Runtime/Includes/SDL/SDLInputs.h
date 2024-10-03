@@ -12,7 +12,7 @@ namespace kbh
 		public:
 			SDLInputs() = default;
 
-			void Update(std::vector<std::function<void(const SDL_Event*)>> hooks);
+			void Update(const std::vector<std::function<void(const SDL_Event*)>>& hooks);
 			[[nodiscard]] inline bool IsQuitResquested() const noexcept { return m_quit_requested; }
 
 			~SDLInputs() = default;

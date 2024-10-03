@@ -3,8 +3,9 @@ add_repositories("nazara-engine-repo https://github.com/NazaraEngine/xmake-repo"
 
 add_requires("libsdl", { configs = { shared = false } })
 add_requires("kvf", "pfd", "vulkan-memory-allocator")
-add_requires("imgui-without-god-damn-vulkan-sdk v1.91.0-docking", { debug = true, configs = { sdl2_no_renderer = true, vulkan = true, shared = false }})
-add_requires("nzsl >=2023.12.31", { configs = { shared = false } })
+add_requires("imgui v1.91.0-docking", { configs = { vulkan = true, sdl2_no_renderer = true }})
+add_requireconfs("imgui", { configs = { cxflags = "-D IMGUI_IMPL_VULKAN_NO_PROTOTYPES" }})
+add_requires("nzsl", { configs = { shared = false } })
 
 add_rules("mode.debug", "mode.release")
 set_defaultmode("release")
@@ -21,7 +22,7 @@ target("kanel-3D")
 	set_default(true)
 	set_kind("binary")
 
-	add_packages("libsdl", "imgui-without-god-damn-vulkan-sdk", "kvf", "pfd", "vulkan-memory-allocator", "nzsl")
+	add_packages("libsdl", "imgui", "kvf", "pfd", "vulkan-memory-allocator", "nzsl")
 
 	add_includedirs("Runtime/Includes/", "Runtime/Sources")
 

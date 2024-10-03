@@ -14,15 +14,7 @@ namespace kbh
 		std::function<void(const EventBase&)> functor = [this](const EventBase& event)
 		{
 			if(event.What() == Event::ResizeEventCode)
-			{
-				kvfDestroyRenderPass(RenderCore::Get().GetDevice(), m_renderpass);
-				std::vector<VkAttachmentDescription> attachments;
-				const Image& image = p_renderer->GetSwapchainImages()[0];
-				attachments.push_back(kvfBuildAttachmentDescription(KVF_IMAGE_COLOR, image.GetFormat(), image.GetLayout(), image.GetLayout(), false, VK_SAMPLE_COUNT_1_BIT));
-				m_renderpass = kvfCreateRenderPass(RenderCore::Get().GetDevice(), attachments.data(), attachments.size(), VK_PIPELINE_BIND_POINT_GRAPHICS);
-				CreateFramebuffers();
-				ImGui_ImplVulkan_SetMinImageCount(kvfGetSwapchainMinImagesCount(p_renderer->GetSwapchain()));
-			}
+				ImGui_ImplVulkan_SetMinImageCount(p_renderer->GetSwapchain().GetMinImagesCount());
 		};
 		EventBus::RegisterListener({ functor, std::to_string((std::uintptr_t)(void**)this) });
 
@@ -62,12 +54,6 @@ namespace kbh
 			return RenderCore::Get().vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkan_instance)), function_name);
 		}, &RenderCore::Get().GetInstanceRef());
 
-		std::vector<VkAttachmentDescription> attachments;
-		const Image& image = p_renderer->GetSwapchainImages()[0];
-		attachments.push_back(kvfBuildAttachmentDescription(KVF_IMAGE_COLOR, image.GetFormat(), image.GetLayout(), image.GetLayout(), false, VK_SAMPLE_COUNT_1_BIT));
-		m_renderpass = kvfCreateRenderPass(RenderCore::Get().GetDevice(), attachments.data(), attachments.size(), VK_PIPELINE_BIND_POINT_GRAPHICS);
-		CreateFramebuffers();
-
 		ImGui_ImplSDL2_InitForVulkan(p_renderer->GetWindow()->GetNativeWindow());
 		ImGui_ImplVulkan_InitInfo init_info{};
 		init_info.Instance = RenderCore::Get().GetInstance();
@@ -79,10 +65,10 @@ namespace kbh
 		init_info.Allocator = nullptr;
 		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 		init_info.Subpass = 0;
-		init_info.MinImageCount = kvfGetSwapchainMinImagesCount(p_renderer->GetSwapchain());
-		init_info.ImageCount = p_renderer->GetSwapchainImages().size();
+		init_info.MinImageCount = p_renderer->GetSwapchain().GetMinImagesCount();
+		init_info.ImageCount = p_renderer->GetSwapchain().GetImagesCount();
 		init_info.CheckVkResultFn = &kvfCheckVk;
-		init_info.RenderPass = m_renderpass;
+		init_info.RenderPass = p_renderer->GetSwapchain().GetRenderpass();
 		ImGui_ImplVulkan_Init(&init_info);
 
 		static const ImWchar icons_ranges[] = { KBH_ICON_MIN_MD, KBH_ICON_MAX_16_MD, 0 };
@@ -108,20 +94,20 @@ namespace kbh
 
 	void ImGuiContext::BeginFrame() noexcept
 	{
-		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
+		ImGui_ImplVulkan_NewFrame();
 		ImGui::NewFrame();
 	}
 
 	void ImGuiContext::EndFrame() noexcept
 	{
-		VkFramebuffer fb = m_framebuffers[p_renderer->GetSwapchainImageIndex()];
+		VkFramebuffer fb = p_renderer->GetSwapchain().GetCurrentFramebuffer();
 		ImGui::Render();
 		ImDrawData* draw_data = ImGui::GetDrawData();
 		if(draw_data->DisplaySize.x >= 0.0f && draw_data->DisplaySize.y >= 0.0f)
 		{
 			VkExtent2D fb_extent = kvfGetFramebufferSize(fb);
-			kvfBeginRenderPass(m_renderpass, p_renderer->GetActiveCommandBuffer(), fb, fb_extent, NULL, 0);
+			kvfBeginRenderPass(p_renderer->GetSwapchain().GetRenderpass(), p_renderer->GetActiveCommandBuffer(), fb, fb_extent, nullptr, 0);
 			ImGui_ImplVulkan_RenderDrawData(draw_data, p_renderer->GetActiveCommandBuffer());
 			RenderCore::Get().vkCmdEndRenderPass(p_renderer->GetActiveCommandBuffer());
 		}
@@ -133,33 +119,11 @@ namespace kbh
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplSDL2_Shutdown();
 		ImGui::DestroyContext();
-		for(VkFramebuffer fb : m_framebuffers)
-			kvfDestroyFramebuffer(RenderCore::Get().GetDevice(), fb);
-		m_framebuffers.clear();
-		kvfDestroyRenderPass(RenderCore::Get().GetDevice(), m_renderpass);
 		RenderCore::Get().vkDestroyDescriptorPool(RenderCore::Get().GetDevice(), m_pool, nullptr);
-	}
-
-	void ImGuiContext::CreateFramebuffers()
-	{
-		for(VkFramebuffer fb : m_framebuffers)
-			kvfDestroyFramebuffer(RenderCore::Get().GetDevice(), fb);
-		m_framebuffers.clear();
-		std::vector<VkAttachmentDescription> attachments;
-		std::vector<VkImageView> attachment_views;
-		const Image& image = p_renderer->GetSwapchainImages()[0];
-		attachments.push_back(kvfBuildAttachmentDescription((kvfIsDepthFormat(image.GetFormat()) ? KVF_IMAGE_DEPTH : KVF_IMAGE_COLOR), image.GetFormat(), image.GetLayout(), image.GetLayout(), false, VK_SAMPLE_COUNT_1_BIT));
-		attachment_views.push_back(image.GetImageView());
-		for(const Image& image : p_renderer->GetSwapchainImages())
-		{
-			attachment_views[0] = image.GetImageView();
-			m_framebuffers.push_back(kvfCreateFramebuffer(RenderCore::Get().GetDevice(), m_renderpass, attachment_views.data(), attachment_views.size(), { .width = image.GetWidth(), .height = image.GetHeight() }));
-		}
 	}
 
 	ImGuiContext::~ImGuiContext()
 	{
-		Destroy();
 	}
 
 	void ImGuiContext::SetDarkTheme()

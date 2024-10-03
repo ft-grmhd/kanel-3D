@@ -2,7 +2,7 @@
 
 namespace kbh
 {
-	void SDLInputs::Update(std::vector<std::function<void(const SDL_Event*)>> hooks)
+	void SDLInputs::Update(const std::vector<std::function<void(const SDL_Event*)>>& hooks)
 	{
 		while(SDL_PollEvent(&m_event))
 		{
